@@ -62,8 +62,6 @@ python fixpoint-4.py filename n m t
 
 # Author
 
-作成情報を列挙する
-
 - 名前：岡田 魁人(Okada Kaito)
 - 所属：岡山大学大学院自然科学研究科電子情報システム工学専攻自然言語処理研究室所属
 - E-mail：pdrj11bt@s.okayama-u.ac.jp
