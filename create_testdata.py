@@ -24,7 +24,7 @@ response_list = [
     '-',
 ]
 
-with open('test.txt', mode='w') as f:
+with open('testdata_for_max.txt', mode='w') as f:
     for h in range(0,24):
         for m in range(0,60):
             for s in range(0,60):
