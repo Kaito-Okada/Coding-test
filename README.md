@@ -33,11 +33,17 @@ python fixpoint-1.py filename
 python fixpoint-2.py filename n
 ```
 
+n(int):タイムアウトの許容回数[回]
+
 - `fixpoint-3.py`
 
 ```bash
 python fixpoint-3.py filename n m t
 ```
+
+n(int):タイムアウトの許容回数[回]
+m(int):平均値を出力するための直近範囲
+t(int or float):許容応答時間[ミリ秒]
 
 - `fixpoint-4.py`
 
