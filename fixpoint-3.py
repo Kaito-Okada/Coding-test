@@ -1,6 +1,8 @@
 import pprint
 import datetime
 import sys
+from collections import deque
+
 
 def open_log_txt(target_log_txt):
     with open(target_log_txt, "r", encoding="utf8")as fobj:
@@ -41,6 +43,15 @@ def calc_error_duration(s,e):
 
     return str_error_duration
 
+def calc_queue_ave(q):
+    queue_list = []
+    if '-' in q:
+        return 'time_out_error'
+    else:
+        for v in q: 
+            queue_list.append(float(v))
+        return float(sum(queue_list) / len(queue_list))
+
 def error_check(log_list,n,m,t):    
     error_flag = 0
     server_error_flag = 0
@@ -54,35 +65,33 @@ def error_check(log_list,n,m,t):
     server_load_flag = 0
     server_load_start = 0
     server_load_end = 0
-    server_load_list = []   
-    
-    for i,l in enumerate(log_list,1):
-        if i >= m:
-            b2_rt = log_list[i-3]['response_time']
-            b1_rt = log_list[i-2]['response_time']
-            now_rt = l['response_time']
-            
-            b1_time = log_list[i-2]['date']
-            now_time = l['date']
+    server_load_list = []
 
-            if b2_rt != '-' and b1_rt != '-' and now_rt != '-':
-                ave_rt = (float(b2_rt)+float(b1_rt)+float(now_rt))/m
-                if  server_load_flag == 0 and ave_rt > t :
-                    server_load_flag = 1
-                    server_load_start = now_time
-                elif server_load_flag == 0 and ave_rt <= t:
-                    pass
-                elif server_load_flag == 1 and ave_rt > t:
-                    pass
-                else:   
-                    server_load_end = b1_time             
-                    server_load_list.append(calc_error_duration(server_load_start,server_load_end))
-                    server_load_flag = 0
-            elif server_load_flag == 0:
+    q = deque(maxlen=m)
+        
+    for i,l in enumerate(log_list,1):
+
+        q.append(l['response_time'])
+        q_mean = calc_queue_ave(q)
+
+        if q_mean =='time_out_error':
+            if server_load_flag == 0:
                 server_load_flag = 1
                 server_load_start = l['date']
             else:
-                pass     
+                pass
+        else:
+            if  server_load_flag == 0 and q_mean > t :
+                    server_load_flag = 1
+                    server_load_start = l['date']
+            elif server_load_flag == 0 and q_mean <= t:
+                pass
+            elif server_load_flag == 1 and q_mean > t:
+                pass
+            else:   
+                server_load_end = l['date']          
+                server_load_list.append(calc_error_duration(server_load_start,server_load_end))
+                server_load_flag = 0
 
         if  error_flag == 0 and '-' in l.values():
             cnt +=1
@@ -118,7 +127,7 @@ if __name__== "__main__":
     args = sys.argv
     target_log_txt = args[1]
     n = int(args[2])
-    m = float(args[3])
+    m = int(args[3])
     t = float(args[4])
 
     server_log_dict,server_name_list = open_log_txt(target_log_txt)
