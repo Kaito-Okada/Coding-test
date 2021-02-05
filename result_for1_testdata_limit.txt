@@ -1,0 +1,3 @@
+❯ python fixpoint-1.py testdata_for_max.txt                 
+---サーバ「10.20.30.1/16」の状況---
+ -故障...「なし」
